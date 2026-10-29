@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+/laravel-app/vendor/
+/laravel-app/node_modules/
+/laravel-app/storage/*.key
+
+/laravel-app/.env
+/laravel-app/.env.*
+!/laravel-app/.env.example
