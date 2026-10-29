@@ -56,7 +56,7 @@ footer{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px}
 </section>
 <h2 class="section-title">Menu Administrasi</h2>
 <nav class="menu" aria-label="Menu administrasi">
-<a href="#siswa" data-panel="siswa">👨‍🎓 <span>Data Siswa</span></a><a href="#guru" data-panel="guru">👩‍🏫 <span>Data Guru</span></a>
+<a href="{{ route('students.index') }}">👨‍🎓 <span>Data Siswa</span></a><a href="#guru" data-panel="guru">👩‍🏫 <span>Data Guru</span></a>
 <a href="#absensi" data-panel="absensi">📋 <span>Absensi</span></a><a href="#akademik" data-panel="akademik">📖 <span>Akademik</span></a>
 <a href="#keuangan" data-panel="keuangan">💳 <span>Keuangan</span></a><a href="#laporan" data-panel="laporan">📊 <span>Laporan</span></a>
 <a href="#pengumuman" data-panel="pengumuman">📢 <span>Pengumuman</span></a><a href="#pengaturan" data-panel="pengaturan">⚙️ <span>Pengaturan</span></a>
