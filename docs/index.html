@@ -330,14 +330,14 @@ function financeDashboard() {
     '<div class="finance-progress-head"><span>Pengeluaran / anggaran</span><strong>'+Math.round(budget ? expense/budget*100 : 0)+'%</strong></div>' +
     '<div class="finance-progress"><span class="'+(budget && expense>budget ? 'over' : '')+'" style="width:'+spent.toFixed(1)+'%"></span></div>' +
     '<div class="finance-progress-note">'+financeEscape(progressText)+'</div>' +
-    '<form class="finance-budget-form" id="financeBudgetForm"><label for="financeBudgetAmount">Atur batas anggaran (Rp)<input id="financeBudgetAmount" name="budget" type="number" min="0" step="1000" value="'+financeEscape(budget)+'" required></label>' +
-    '<button type="submit">Simpan</button></form></section>' +
+    '<form class="finance-budget-form" id="financeBudgetForm" onsubmit="return false"><label for="financeBudgetAmount">Atur batas anggaran (Rp)<input id="financeBudgetAmount" name="budget" type="number" min="0" step="1000" value="'+financeEscape(budget)+'" required></label>' +
+    '<button type="button" data-finance-action="save-budget">Simpan</button></form></section>' +
     '<section class="panel finance-panel"><div class="panel-head"><div><h3>Pengeluaran per kategori</h3><div class="panel-sub">Ringkasan '+monthName+' · '+financeEscape(unit)+'</div></div></div>' +
     financeCategoriesHtml(rows) + '</section></div>' +
     '<section class="panel finance-ledger"><div class="finance-ledger-head"><div><h3>Daftar transaksi</h3><div class="panel-sub">Pilih Ubah atau Hapus untuk mengelola catatan.</div></div><span class="finance-ledger-count">'+visible.length+' transaksi</span></div>' +
     '<div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Unit / kategori</th><th>Jenis</th><th>Nominal / aksi</th></tr></thead><tbody>' +
     financeRowsHtml(visible) + '</tbody></table></div></section>' +
-    '<dialog id="financeDialog" class="finance-dialog" aria-labelledby="financeDialogTitle"><form id="financeTransactionForm" class="finance-dialog-form">' +
+    '<dialog id="financeDialog" class="finance-dialog" aria-labelledby="financeDialogTitle"><form id="financeTransactionForm" class="finance-dialog-form" onsubmit="return false">' +
     '<input type="hidden" name="id"><div class="finance-dialog-head"><div><h3 id="financeDialogTitle">Tambah transaksi</h3><p>Nilai ini disimpan di browser ini saja.</p></div>' +
     '<button type="button" class="finance-dialog-close" data-finance-action="close" aria-label="Tutup">×</button></div>' +
     '<div class="finance-form-grid"><label class="finance-field">Jenis<select id="financeTransactionType" name="type" required><option value="income">Penerimaan</option><option value="expense">Pengeluaran</option></select></label>' +
@@ -346,20 +346,13 @@ function financeDashboard() {
     '<label class="finance-field">Unit<select name="unit" required>'+FINANCE_UNITS.map(function(u){return '<option value="'+financeEscape(u)+'">'+financeEscape(u)+'</option>';}).join('')+'</select></label>' +
     '<label class="finance-field">Kategori<select id="financeCategory" name="category" required></select></label>' +
     '<label class="finance-field full">Keterangan<input name="description" type="text" maxlength="100" required placeholder="Contoh: Pembayaran SPP bulan ini"></label></div>' +
-    '<div class="finance-dialog-actions"><button type="button" data-finance-action="close">Batal</button><button type="submit">Simpan transaksi</button></div></form></dialog>' +
+    '<div class="finance-dialog-actions"><button type="button" data-finance-action="close">Batal</button><button type="button" data-finance-action="save-transaction">Simpan transaksi</button></div></form></dialog>' +
     '</div>';
 }
 function financeRender() {
   if (document.querySelector('.finance-page')) {
     document.getElementById('content').innerHTML = financeDashboard();
-    financeAttachSubmitHandlers();
   }
-}
-function financeAttachSubmitHandlers() {
-  ['financeBudgetForm','financeTransactionForm'].forEach(function (id) {
-    const form = document.getElementById(id);
-    if (form) form.addEventListener('submit', financeHandleSubmit);
-  });
 }
 function financePopulateCategories(selected) {
   const form = document.getElementById('financeTransactionForm');
@@ -432,7 +425,6 @@ window.setPage = function (page) {
     button.classList.toggle('active', button.dataset.page === 'finance');
   });
   document.getElementById('content').innerHTML = financeDashboard();
-  financeAttachSubmitHandlers();
   document.getElementById('sidebar').classList.remove('open');
 };
 document.getElementById('unitFilter').addEventListener('change', function () {
@@ -468,6 +460,8 @@ document.addEventListener('click', function (event) {
   if (action === 'new') financeOpen();
   else if (action === 'edit') financeOpen(button.dataset.id);
   else if (action === 'close') financeClose();
+  else if (action === 'save-budget') financeSaveBudget();
+  else if (action === 'save-transaction') financeSaveTransaction();
   else if (action === 'export') financeExport();
   else if (action === 'delete') {
     const transaction = financeGetState().transactions.find(function (t) { return t.id === button.dataset.id; });
@@ -478,23 +472,23 @@ document.addEventListener('click', function (event) {
     notify(saved ? 'Transaksi dihapus.' : 'Transaksi dihapus sementara; browser tidak dapat menyimpannya.');
   }
 });
-function financeHandleSubmit(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  if (form.id === 'financeBudgetForm') {
-    const amount = Math.round(Number(form.elements['budget'].value));
-    if (!Number.isFinite(amount) || amount < 0) {
-      notify('Masukkan anggaran nol atau lebih.');
-      return;
-    }
-    const key = financeBudgetKey(financeFilters.month,financeSelectedUnit());
-    financeGetState().budgets[key] = amount;
-    const saved = financePersist();
-    financeRender();
-    notify(saved ? 'Anggaran bulanan disimpan di browser ini.' : 'Anggaran hanya tersimpan sementara di halaman ini.');
+function financeSaveBudget() {
+  const form = document.getElementById('financeBudgetForm');
+  if (!form) return;
+  const amount = Math.round(Number(form.elements['budget'].value));
+  if (!Number.isFinite(amount) || amount < 0) {
+    notify('Masukkan anggaran nol atau lebih.');
     return;
   }
-  if (form.id !== 'financeTransactionForm') return;
+  const key = financeBudgetKey(financeFilters.month,financeSelectedUnit());
+  financeGetState().budgets[key] = amount;
+  const saved = financePersist();
+  financeRender();
+  notify(saved ? 'Anggaran bulanan disimpan di browser ini.' : 'Anggaran hanya tersimpan sementara di halaman ini.');
+}
+function financeSaveTransaction() {
+  const form = document.getElementById('financeTransactionForm');
+  if (!form) return;
   const data = new FormData(form);
   const type = String(data.get('type') || '');
   const date = String(data.get('date') || '');
