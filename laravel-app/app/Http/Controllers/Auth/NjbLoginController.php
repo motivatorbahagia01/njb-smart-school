@@ -11,7 +11,7 @@ class NjbLoginController extends Controller
     public function show()
     {
         if (session('njb_admin')) {
-            return redirect()->route('students.index');
+            return redirect()->route('dashboard');
         }
 
         return view('auth.njb-login');
@@ -36,7 +36,7 @@ class NjbLoginController extends Controller
         $request->session()->regenerate();
         $request->session()->put('njb_admin', true);
 
-        return redirect()->intended(route('students.index'));
+        return redirect()->intended(route('dashboard'));
     }
 
     public function logout(Request $request)

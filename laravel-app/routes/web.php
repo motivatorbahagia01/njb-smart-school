@@ -9,6 +9,6 @@ Route::post('/login', [NjbLoginController::class, 'login'])->middleware('throttl
 Route::post('/logout', [NjbLoginController::class, 'logout'])->name('logout');
 
 Route::middleware('njb.admin')->group(function () {
-    Route::get('/', fn () => view('welcome'))->name('dashboard');
+    Route::get('/', fn () => view('finance.dashboard'))->name('dashboard');
     Route::resource('students', StudentController::class)->except(['show']);
 });

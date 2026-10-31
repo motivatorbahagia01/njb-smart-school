@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#708238">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>NJB Smart School 2.0 — Keuangan</title>
+<style>
+:root{--olive:#708238;--olive-dark:#465522;--cream:#f1e5c0;--brown:#a98b6e;--bg:#f6f7f2;--ink:#20251a;--muted:#73796b;--line:#e5e8dc;--white:#fff;--shadow:0 8px 24px rgba(35,45,20,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,select,input{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-columns:248px 1fr}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:24px}
+.brand{display:flex;gap:11px;align-items:center;padding:0 8px}.logo{width:42px;height:42px;border-radius:14px;background:var(--olive);color:white;display:grid;place-items:center;font-weight:800;letter-spacing:-1px}.brand strong{display:block;font-size:14px}.brand small{color:var(--muted);font-size:11px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.4px;color:#929886;padding:0 12px;margin-bottom:7px;font-weight:800}
+.nav{display:grid;gap:5px}.nav button{display:flex;align-items:center;gap:11px;border:0;background:transparent;padding:11px 12px;border-radius:12px;color:#5c6353;text-align:left;font-weight:600}.nav button.active,.nav button:hover{background:#eef2e5;color:var(--olive-dark)}.nav .ico{width:21px;text-align:center;font-size:17px}
+.sidebar-foot{margin-top:auto;background:#f6f4e9;border-radius:15px;padding:14px;font-size:12px;color:#5e654f}.sidebar-foot strong{display:block;color:var(--olive-dark);margin-bottom:4px}
+main{min-width:0}.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 30px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.8);gap:14px}.top-left{display:flex;align-items:center;gap:12px}.mobile-brand{display:none}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--olive);font-weight:800}.topbar h1{font-size:20px;margin:2px 0 0}.top-actions{display:flex;align-items:center;gap:12px}.pill{border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:11px;color:#505747;font-size:12px}.avatar{width:36px;height:36px;background:var(--cream);color:var(--olive-dark);border-radius:50%;display:grid;place-items:center;font-weight:800}
+.content{padding:26px 30px 36px;max-width:1500px;margin:auto}.welcome{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}.welcome h2{font-size:26px;letter-spacing:-.7px;margin:0 0 6px}.welcome p{color:var(--muted);margin:0}.date{font-size:12px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;white-space:nowrap}
+.hero{background:linear-gradient(120deg,#485823,#708238 65%,#8e9e5a);border-radius:22px;padding:24px 26px;color:#fff;display:flex;justify-content:space-between;gap:20px;align-items:center;box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:250px;height:250px;border:1px solid rgba(255,255,255,.18);border-radius:50%;right:7%;top:-120px;box-shadow:0 0 0 25px rgba(255,255,255,.04),0 0 0 55px rgba(255,255,255,.03)}.hero .eyebrow{color:#e4edc7}.hero h2{font-size:25px;margin:5px 0 8px;letter-spacing:-.5px}.hero p{margin:0;color:#edf1df;max-width:650px;font-size:13px}.hero-btn{position:relative;z-index:1;border:0;background:var(--cream);color:#3f4d1d;font-weight:800;border-radius:12px;padding:12px 15px;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}.stat{background:#fff;border:1px solid var(--line);border-radius:17px;padding:17px;box-shadow:var(--shadow)}.stat-head{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px;gap:8px}.stat-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#f0f3e7;font-size:17px}.stat strong{display:block;font-size:27px;letter-spacing:-.8px;margin:12px 0 2px}.stat small{font-size:11px;color:var(--muted)}.stat .good{color:#55752d;font-weight:700}
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.85fr);gap:18px}.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:19px;box-shadow:var(--shadow);min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.panel h3{font-size:15px;margin:0}.panel-sub{color:var(--muted);font-size:11px;margin-top:3px}.text-btn{border:0;background:transparent;color:var(--olive);font-size:12px;font-weight:800;padding:6px}
+.units{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.unit{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;background:#fff;text-align:left;width:100%;color:inherit}.unit:hover{border-color:#aebc89;background:#fbfcf8}.unit-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#f0f3e7;font-size:20px;flex-shrink:0}.unit strong{display:block;font-size:13px}.unit small{color:var(--muted);font-size:11px}.unit .arrow{margin-left:auto;color:#9ba18d}
+.activity{display:grid;gap:14px}.activity-row{display:flex;gap:11px;align-items:flex-start}.activity-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#f3f3e9;flex-shrink:0}.activity-row strong{font-size:12px;display:block}.activity-row p{margin:3px 0 0;font-size:11px;color:var(--muted)}.time{font-size:10px;color:#8b9181;margin-left:auto;white-space:nowrap}
+.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}.quick button{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 8px;text-align:center;color:var(--ink)}.quick button:hover{border-color:#aebc89}.quick span{font-size:21px;display:block;margin-bottom:6px}.quick strong{font-size:11px;display:block}
+.section-title{font-size:19px;margin:0 0 6px}.section-desc{margin:0 0 20px;color:var(--muted);font-size:13px}.module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.module-card{background:white;border:1px solid var(--line);border-radius:16px;padding:18px}.module-card .stat-icon{margin-bottom:14px}.module-card h3{margin:0 0 7px;font-size:15px}.module-card p{margin:0 0 15px;color:var(--muted);font-size:12px}.module-card button{border:1px solid var(--line);background:#fafbf7;border-radius:10px;padding:9px 11px;color:var(--olive-dark);font-weight:700;font-size:12px}
+.notice{background:#fff8e7;border:1px solid #efe1b7;border-radius:13px;padding:13px 15px;font-size:12px;color:#65552c;margin-top:18px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:13px}.table{border-collapse:collapse;width:100%;min-width:520px;font-size:12px}.table th,.table td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line)}.table th{background:#f8f9f4;color:#73796b;font-size:10px;text-transform:uppercase;letter-spacing:.8px}.table tr:last-child td{border-bottom:0}.status{display:inline-block;border-radius:99px;padding:4px 8px;font-size:10px;font-weight:800;background:#edf4df;color:#4e6b2a}.status.pending{background:#fff1d6;color:#8a6320}
+.footer{text-align:center;color:#9a9f91;font-size:10px;padding:26px 0 0}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#263019;color:#fff;border-radius:12px;padding:12px 16px;font-size:12px;box-shadow:var(--shadow);transition:.25s;z-index:50}.toast.show{opacity:1;transform:translate(-50%,0)}
+.menu-toggle{display:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.app{display:block}.sidebar{position:fixed;z-index:20;inset:0 auto 0 0;width:265px;transform:translateX(-105%);transition:transform .25s;box-shadow:var(--shadow)}.sidebar.open{transform:translateX(0)}.topbar{height:68px;padding:0 15px}.menu-toggle{display:block}.mobile-brand{display:block;font-weight:800;font-size:13px}.mobile-brand small{display:block;font-weight:500;color:var(--muted);font-size:10px}.top-left .desktop-title{display:none}.top-actions .pill{display:none}.top-actions .logout-form .pill{display:block}.content{padding:19px 14px 30px}.welcome{display:block}.welcome h2{font-size:23px}.date{display:inline-block;margin-top:12px}.hero{padding:20px;border-radius:17px;display:block}.hero h2{font-size:22px}.hero-btn{margin-top:15px}.stats{gap:9px}.stat{padding:13px;border-radius:14px}.stat strong{font-size:24px}.stat-head{font-size:10px}.stat-icon{width:30px;height:30px}.grid{gap:13px}.panel{padding:15px}.units{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,minmax(0,1fr))}.module-grid{grid-template-columns:1fr}.section-title{font-size:18px}}
+</style>
+<style>
+
+.finance-page{display:grid;gap:18px}
+.finance-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.finance-heading h2{margin:0;font-size:22px;letter-spacing:-.4px}
+.finance-heading p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.finance-actions{display:flex;gap:8px;flex-shrink:0}
+.finance-button{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 13px;border-radius:11px;font-weight:750;font-size:12px}
+.finance-button:hover{border-color:#aebc89;background:#fbfcf8}
+.finance-button.primary{background:var(--olive);border-color:var(--olive);color:#fff}
+.finance-button.primary:hover{background:var(--olive-dark)}
+.finance-notice{padding:12px 14px;background:#f5f6ed;border:1px solid #e4e8d7;border-radius:12px;color:#596246;font-size:12px;line-height:1.5}
+.finance-filters{display:grid;grid-template-columns:170px 190px minmax(180px,1fr);gap:10px;align-items:end}
+.finance-filter{display:grid;gap:6px;color:#6f7566;font-size:11px;font-weight:750}
+.finance-filter input,.finance-filter select,.finance-budget-form input,.finance-dialog input,.finance-dialog select{width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);padding:10px 11px;font:inherit;font-size:13px}
+.finance-filter input:focus,.finance-filter select:focus,.finance-budget-form input:focus,.finance-dialog input:focus,.finance-dialog select:focus{outline:2px solid #d7dfbf;border-color:#9eaf72}
+.finance-stats{margin:0}
+.finance-stats .stat{min-width:0}
+.finance-stats .stat strong{font-size:clamp(18px,2.2vw,25px);overflow-wrap:anywhere}
+.finance-panels{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:18px}
+.finance-panel .panel-head{align-items:flex-start}
+.finance-budget-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin-top:18px}
+.finance-budget-form label{display:grid;gap:6px;color:#6f7566;font-size:11px;font-weight:750}
+.finance-budget-form button{border:0;background:var(--olive);color:#fff;padding:10px 13px;border-radius:10px;font-weight:750;font-size:12px}
+.finance-progress-head{display:flex;justify-content:space-between;gap:12px;margin:15px 0 7px;font-size:12px}
+.finance-progress-head strong{font-size:12px}
+.finance-progress{height:9px;border-radius:99px;background:#edf0e5;overflow:hidden}
+.finance-progress span{display:block;height:100%;border-radius:inherit;background:var(--olive);transition:width .2s ease}
+.finance-progress span.over{background:#bd654c}
+.finance-progress-note{margin-top:7px;color:var(--muted);font-size:11px}
+.finance-categories{display:grid;gap:13px;margin-top:18px}
+.finance-category-row{display:grid;grid-template-columns:minmax(95px,.8fr) minmax(70px,1fr) auto;align-items:center;gap:10px;font-size:12px}
+.finance-category-name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.finance-category-bar{height:7px;border-radius:99px;background:#edf0e5;overflow:hidden}
+.finance-category-bar span{display:block;height:100%;border-radius:inherit;background:#9aaa70}
+.finance-category-amount{color:#606759;text-align:right;font-variant-numeric:tabular-nums}
+.finance-ledger{display:grid;gap:12px}
+.finance-pagination{display:flex;justify-content:flex-end;align-items:center;gap:12px;color:var(--muted);font-size:12px}
+.finance-pagination button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 10px;color:var(--ink)}
+.finance-pagination button:disabled{opacity:.45;cursor:not-allowed}
+.finance-ledger-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.finance-ledger-head h3{margin:0;font-size:15px}
+.finance-ledger-count{color:var(--muted);font-size:11px}
+.finance-table-wrap{width:100%;overflow:auto;border:1px solid var(--line);border-radius:13px}
+.finance-table{width:100%;min-width:760px;border-collapse:collapse;font-size:12px}
+.finance-table th{padding:11px 12px;background:#f8f9f5;color:#747a6d;text-align:left;font-weight:750;white-space:nowrap}
+.finance-table td{padding:12px;border-top:1px solid #eef0e9;vertical-align:middle}
+.finance-table tbody tr:hover{background:#fbfcf8}
+.finance-table .finance-date{white-space:nowrap;color:#666d5c}
+.finance-table .finance-description{font-weight:750}
+.finance-table .finance-sub{display:block;margin-top:3px;color:var(--muted);font-size:10px;font-weight:500}
+.finance-table .finance-amount{font-weight:800;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.finance-amount.income{color:#4e7130}
+.finance-amount.expense{color:#ad5a45}
+.finance-type-badge{display:inline-flex;padding:4px 8px;border-radius:99px;font-size:10px;font-weight:800;white-space:nowrap}
+.finance-type-badge.income{background:#eff5e8;color:#527235}
+.finance-type-badge.expense{background:#fbefeb;color:#a25340}
+.finance-row-actions{display:flex;justify-content:flex-end;gap:5px}
+.finance-row-actions button{border:1px solid var(--line);background:#fff;color:#535a4b;padding:6px 8px;border-radius:8px;font-size:10px;font-weight:700}
+.finance-row-actions button:hover{border-color:#aebc89}
+.finance-empty{padding:28px 14px!important;text-align:center;color:var(--muted)}
+.finance-dialog{width:min(560px,calc(100% - 24px));max-width:560px;border:0;border-radius:18px;padding:0;box-shadow:0 22px 80px rgba(25,35,15,.25);color:var(--ink)}
+.finance-dialog::backdrop{background:rgba(28,35,22,.48);backdrop-filter:blur(2px)}
+.finance-dialog-form{padding:22px}
+.finance-dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+.finance-dialog-head h3{margin:0;font-size:18px}
+.finance-dialog-head p{margin:4px 0 0;color:var(--muted);font-size:11px}
+.finance-dialog-close{border:0;background:#f1f3eb;border-radius:9px;width:34px;height:34px;font-size:18px;color:#5c6353}
+.finance-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.finance-field{display:grid;gap:6px;color:#6f7566;font-size:11px;font-weight:750}
+.finance-field.full{grid-column:1/-1}
+.finance-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.finance-dialog-actions button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:750}
+.finance-dialog-actions button[type=submit]{background:var(--olive);border-color:var(--olive);color:#fff}
+@media(max-width:900px){.finance-panels{grid-template-columns:1fr}.finance-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.finance-heading{display:grid}.finance-actions{width:100%}.finance-actions button{flex:1}.finance-filters{grid-template-columns:1fr 1fr}.finance-filter-search{grid-column:1/-1}.finance-budget-form{grid-template-columns:1fr}.finance-budget-form button{width:100%}.finance-category-row{grid-template-columns:minmax(80px,.8fr) minmax(45px,1fr) auto;gap:7px;font-size:11px}.finance-form-grid{grid-template-columns:1fr}.finance-field.full{grid-column:auto}.finance-dialog-form{padding:17px}}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+ <div class="brand"><div class="logo">NJ</div><div><strong>NJB SMART SCHOOL</strong><small>Ekosistem Digital Yayasan</small></div></div>
+ <div><div class="nav-label">Workspace</div><nav class="nav" id="nav">
+  <button class="active" data-page="dashboard"><span class="ico">▦</span>Dashboard</button>
+  <button data-page="units"><span class="ico">▤</span>Unit Pendidikan</button>
+  <button data-page="people"><span class="ico">♙</span>SDM & Pengguna</button>
+  <button data-page="attendance"><span class="ico">◷</span>Absensi</button>
+  <button data-page="academic"><span class="ico">▧</span>Akademik</button>
+  <button data-page="finance"><span class="ico">▤</span>Keuangan</button>
+  <button data-page="reports"><span class="ico">▥</span>Laporan Yayasan</button>
+ </nav></div>
+ <div><div class="nav-label">Sistem</div><nav class="nav">
+  <button data-page="settings"><span class="ico">⚙</span>Pengaturan</button>
+ </nav></div>
+ <div class="sidebar-foot"><strong>NJB Smart School</strong>Modul keuangan tersambung ke server. Modul lain dikembangkan bertahap.</div>
+</aside>
+<main>
+<header class="topbar">
+ <div class="top-left"><button class="menu-toggle" id="menuToggle" aria-label="Buka menu">☰</button><div class="mobile-brand">NJB SMART SCHOOL<small>Yayasan Nurul Jadid Batam</small></div><div class="desktop-title"><div class="eyebrow">Yayasan Nurul Jadid Batam</div><h1 id="pageTitle">Dashboard Yayasan</h1></div></div>
+ <div class="top-actions"><select class="pill" id="unitFilter" aria-label="Pilih unit"><option>Semua Unit</option><option>KB-TK</option><option>SMP</option><option>SMK</option><option>Pesantren Putri</option></select><button class="pill" id="helpBtn">Bantuan</button><div class="avatar" title="Pembina Yayasan">BH</div><form method="POST" action="/logout" class="logout-form"><input type="hidden" name="_token" value="{{ csrf_token() }}"><button class="pill" type="submit">Keluar</button></form></div>
+</header>
+<div class="content" id="content"></div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const content=document.getElementById('content'), title=document.getElementById('pageTitle'), toast=document.getElementById('toast');
+const titles={dashboard:'Dashboard Yayasan',units:'Unit Pendidikan',people:'SDM & Pengguna',attendance:'Absensi',academic:'Akademik',finance:'Keuangan',reports:'Laporan Yayasan',settings:'Pengaturan Sistem'};
+function notify(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2600)}
+function stat(label,value,sub,ico){return `<div class="stat"><div class="stat-head"><span>${label}</span><span class="stat-icon">${ico}</span></div><strong>${value}</strong><small>${sub}</small></div>`}
+const unitData=[['KB-TK','Pendidikan usia dini','👧','2 unit layanan'],['SMP','Sekolah Menengah Pertama','🎓','Reguler & program unggulan'],['SMK','Sekolah Menengah Kejuruan','🧑‍💻','Program keahlian'],['Pesantren Putri','Pembinaan & asrama','☪️','Tahfiz dan kitab kuning']];
+function dashboard(){return `
+<div class="welcome"><div><h2>Selamat datang, Pembina Yayasan 👋</h2><p>Pusat kendali digital untuk seluruh unit Nurul Jadid Batam.</p></div><div class="date" id="today"></div></div>
+<section class="hero"><div><div class="eyebrow">NJB Smart School 2.0</div><h2>Satu yayasan. Satu sistem. Satu arah.</h2><p>Satukan data pendidikan, sumber daya manusia, dan operasional dalam satu ekosistem yang bertumbuh bersama Nurul Jadid.</p></div><button class="hero-btn" data-go="units">Jelajahi unit →</button></section>
+<div class="stats">${stat('Unit Pendidikan','04','KB-TK · SMP · SMK · Pesantren','🏫')}${stat('Pengguna Terdaftar','128','Contoh data prototipe','♙')}${stat('Kehadiran Hari Ini','94,2%','Contoh indikator kehadiran','◷')}${stat('Modul Terencana','08','Dikembangkan bertahap','▦')}</div>
+<div class="grid"><section class="panel"><div class="panel-head"><div><h3>Unit dalam Ekosistem</h3><div class="panel-sub">Pilih unit untuk melihat ruang kerja unit tersebut.</div></div><button class="text-btn" data-go="units">Semua unit →</button></div><div class="units">${unitData.map(u=>`<button class="unit" data-unit="${u[0]}"><span class="unit-icon">${u[2]}</span><span><strong>${u[0]}</strong><small>${u[3]}</small></span><span class="arrow">↗</span></button>`).join('')}</div></section>
+<section class="panel"><div class="panel-head"><div><h3>Aktivitas Sistem</h3><div class="panel-sub">Contoh aktivitas yang kelak tercatat otomatis.</div></div><span class="status pending">DEMO</span></div><div class="activity"><div class="activity-row"><span class="activity-icon">🔐</span><div><strong>Login tercatat</strong><p>Audit akses pengguna dan waktu login.</p></div><span class="time">08:00</span></div><div class="activity-row"><span class="activity-icon">◷</span><div><strong>Rekap absensi</strong><p>Ringkasan kehadiran per unit.</p></div><span class="time">08:15</span></div><div class="activity-row"><span class="activity-icon">▤</span><div><strong>Laporan unit</strong><p>Menunggu integrasi data operasional.</p></div><span class="time">09:00</span></div></div></section></div>
+<div class="quick"><button data-go="people"><span>♙</span><strong>Kelola Pengguna</strong></button><button data-go="attendance"><span>◷</span><strong>Absensi</strong></button><button data-go="academic"><span>▧</span><strong>Akademik</strong></button><button data-go="reports"><span>▥</span><strong>Laporan</strong></button></div>
+<div class="notice">⚠️ <strong>Catatan:</strong> angka dan aktivitas di dashboard ini adalah data contoh untuk uji tampilan, bukan data resmi sekolah.</div><div class="footer">NJB SMART SCHOOL · Yayasan Nurul Jadid Batam · Prototype v0.3</div>`}
+function units(){return `<h2 class="section-title">Unit Pendidikan</h2><p class="section-desc">Ruang kerja terpisah untuk setiap unit, dengan standar data dan tata kelola yayasan yang sama.</p><div class="module-grid">${unitData.map((u,i)=>`<div class="module-card"><div class="stat-icon">${u[2]}</div><h3>${u[0]}</h3><p>${u[1]}. ${u[3]}.</p><button data-unit="${u[0]}">Buka ruang unit →</button></div>`).join('')}</div><div class="notice">Tahap berikutnya: profil unit, tahun ajaran, rombongan belajar, guru/staf, siswa, dan konfigurasi program.</div>`}
+const moduleInfo={
+people:['SDM & Pengguna','Kelola identitas, jabatan, unit kerja, dan hak akses.',['Pembina Yayasan','Kepala Unit','Guru & Wali Kelas','Staf Administrasi','Orang Tua / Wali']],
+attendance:['Absensi','Pencatatan kehadiran dan rekap harian per unit.',['Absensi Guru & Staf','Absensi Siswa','QR Code','Rekap Harian','Izin & Sakit']],
+academic:['Akademik','Ruang pengelolaan kelas, jadwal, nilai, dan perkembangan siswa.',['Tahun Ajaran','Kelas & Rombel','Jadwal Pelajaran','Nilai & Rapor','Tahfiz & Pembinaan']],
+finance:['Keuangan','Ruang administrasi keuangan dengan akses terbatas.',['SPP & Pembayaran','Anggaran Unit','Penerimaan & Pengeluaran','Rekap Bulanan','Persetujuan Transaksi']],
+reports:['Laporan Yayasan','Ringkasan lintas unit untuk pemantauan dan keputusan pimpinan.',['Kinerja Tiap Unit','Rekap SDM','Rekap Kehadiran','Akademik','Ringkasan Keuangan']],
+settings:['Pengaturan Sistem','Konfigurasi dasar ekosistem NJB Smart School.',['Profil Yayasan','Daftar Unit','Tahun Ajaran','Peran & Hak Akses','Audit Aktivitas']]
+};
+function modulePage(key){const m=moduleInfo[key];return `<h2 class="section-title">${m[0]}</h2><p class="section-desc">${m[1]}</p><div class="module-grid">${m[2].map((x,i)=>`<div class="module-card"><div class="stat-icon">${['◈','▧','◷','♙','▥'][i%5]}</div><h3>${x}</h3><p>Modul direncanakan dalam roadmap implementasi. Fungsi operasional belum aktif pada prototipe ini.</p><button data-action="${x}">Lihat rencana →</button></div>`).join('')}</div><div class="notice">Modul ini belum menyimpan data ke server. Setelah backend dan autentikasi aktif, data akan diatur berdasarkan peran dan unit pengguna.</div>`}
+function setPage(page){if(!titles[page])page='dashboard';title.textContent=titles[page];document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));content.innerHTML=page==='dashboard'?dashboard():page==='units'?units():modulePage(page);document.getElementById('sidebar').classList.remove('open');const d=document.getElementById('today');if(d)d.textContent=new Intl.DateTimeFormat('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());}
+document.addEventListener('click',e=>{const nav=e.target.closest('[data-page]');if(nav){setPage(nav.dataset.page);return}const go=e.target.closest('[data-go]');if(go){setPage(go.dataset.go);return}const unit=e.target.closest('[data-unit]');if(unit){document.getElementById('unitFilter').value=unit.dataset.unit;notify('Ruang '+unit.dataset.unit+' dipilih. Data unit belum tersambung.');return}const action=e.target.closest('[data-action]');if(action){notify(action.dataset.action+': akan tersedia pada tahap implementasi.');return}});
+document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+document.getElementById('helpBtn').addEventListener('click',()=>notify('Data keuangan disimpan di server setelah Anda masuk sebagai admin.'));
+document.getElementById('unitFilter').addEventListener('change',e=>{if(e.target.value!=='Semua Unit')notify('Filter '+e.target.value+' dipilih. Integrasi data menyusul.');else notify('Menampilkan seluruh unit.');});
+setPage('dashboard');
+</script>
+<script>
+
+const FINANCE_UNITS = ['KB-TK','SMP','SMK','Pesantren Putri'];
+const FINANCE_CATEGORIES = {
+  income: ['SPP','Bantuan','Donasi','Kegiatan','Lainnya'],
+  expense: ['Gaji','Operasional','Utilitas','Sarana & Prasarana','Kegiatan','Lainnya']
+};
+let financeState = {transactions:[]};
+let financeSummary = null;
+let financeLoading = false;
+let financeError = null;
+let financeLoadVersion = 0;
+let financePage = 1;
+let financeLastPage = 1;
+let financeSearchTimer = null;
+let financeFilters = {month: financeCurrentMonth(), type: 'all', query: ''};
+
+function financeCurrentMonth(date) {
+  const d = date || new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+function financeToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function financeEscape(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+function financeMoney(value) {
+  return new Intl.NumberFormat('id-ID', {style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(value) || 0);
+}
+function financeCompactMoney(value) {
+  return new Intl.NumberFormat('id-ID', {style:'currency',currency:'IDR',notation:'compact',maximumFractionDigits:1}).format(Number(value) || 0);
+}
+function financeMonthName(month) {
+  const d = new Date(month + '-01T12:00:00');
+  return new Intl.DateTimeFormat('id-ID', {month:'long',year:'numeric'}).format(d);
+}
+function financeDefaultBudget(unit) {
+  const values = {'Semua Unit':60000000,'KB-TK':12000000,'SMP':16000000,'SMK':20000000,'Pesantren Putri':12000000};
+  return values[unit] || values['Semua Unit'];
+}
+async function financeRequest(path, method, payload) {
+  const headers = {'Accept':'application/json'};
+  const verb = method || 'GET';
+  const options = {method:verb,credentials:'same-origin',headers:headers};
+  if (!['GET','HEAD'].includes(verb)) {
+    headers['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+  }
+  if (payload !== undefined) {
+    headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(payload);
+  }
+  const response = await fetch(path, options);
+  if (response.status === 401) {
+    window.location.assign('/login');
+    throw new Error('Sesi admin berakhir. Silakan masuk kembali.');
+  }
+  const data = response.status === 204 ? null : await response.json();
+  if (!response.ok) {
+    const error = new Error(data && data.message ? data.message : 'Permintaan ke server gagal.');
+    error.status = response.status;
+    throw error;
+  }
+  return data;
+}
+function financeLoad() {
+  const version = ++financeLoadVersion;
+  financeLoading = true;
+  financeError = null;
+  financeRender();
+  const params = new URLSearchParams({month:financeFilters.month,unit:financeSelectedUnit()});
+  const transactionParams = new URLSearchParams(params);
+  if (financeFilters.type !== 'all') transactionParams.set('type',financeFilters.type);
+  if (financeFilters.query.trim()) transactionParams.set('q',financeFilters.query.trim());
+  transactionParams.set('page',String(financePage));
+  transactionParams.set('per_page','100');
+  return Promise.all([
+    financeRequest('/api/v1/finance/summary?' + params.toString()),
+    financeRequest('/api/v1/finance/transactions?' + transactionParams.toString())
+  ]).then(function (responses) {
+    if (version !== financeLoadVersion) return;
+    financeSummary = responses[0].data || responses[0];
+    financeState = {transactions:responses[1].data || []};
+    financeLastPage = Number(responses[1].meta && responses[1].meta.last_page) || 1;
+  }).catch(function (error) {
+    if (version !== financeLoadVersion || error.status === 401) return;
+    financeError = error.message || 'Tidak dapat memuat data keuangan.';
+  }).finally(function () {
+    if (version !== financeLoadVersion) return;
+    financeLoading = false;
+    financeRender();
+  });
+}
+function financeSelectedUnit() {
+  const selector = document.getElementById('unitFilter');
+  return selector && selector.value ? selector.value : 'Semua Unit';
+}
+function financeBudget(month, unit) {
+  if (financeSummary && financeSummary.month === month && financeSummary.unit === unit) {
+    return Number(financeSummary.budget) || 0;
+  }
+  return financeDefaultBudget(unit);
+}
+function financeDateLabel(value) {
+  const d = new Date(value + 'T12:00:00');
+  return new Intl.DateTimeFormat('id-ID', {day:'numeric',month:'short',year:'numeric'}).format(d);
+}
+function financeSummaryRows() {
+  const unit = financeSelectedUnit();
+  return financeState.transactions.filter(function (t) {
+    return t.date.slice(0,7) === financeFilters.month && (unit === 'Semua Unit' || t.unit === unit);
+  });
+}
+function financeVisibleRows() {
+  const q = financeFilters.query.trim().toLocaleLowerCase('id-ID');
+  return financeSummaryRows().filter(function (t) {
+    const typeOk = financeFilters.type === 'all' || t.type === financeFilters.type;
+    const searchOk = !q || [t.description,t.category,t.unit].join(' ').toLocaleLowerCase('id-ID').includes(q);
+    return typeOk && searchOk;
+  }).sort(function (a,b) { return b.date.localeCompare(a.date); });
+}
+function financeCategoriesHtml(rows) {
+  const totals = {};
+  if (financeSummary && Array.isArray(financeSummary.expenseByCategory)) {
+    financeSummary.expenseByCategory.forEach(function (item) {
+      totals[item.category] = Number(item.amount || 0);
+    });
+  } else {
+    rows.filter(function (t) { return t.type === 'expense'; }).forEach(function (t) {
+      totals[t.category] = (totals[t.category] || 0) + Number(t.amount || 0);
+    });
+  }
+  const names = Object.keys(totals).sort(function (a,b) { return totals[b] - totals[a]; });
+  if (!names.length) return '<div class="finance-empty">Belum ada pengeluaran pada periode ini.</div>';
+  const max = Math.max.apply(null, names.map(function (name) { return totals[name]; }));
+  return '<div class="finance-categories">' + names.map(function (name) {
+    const percent = max ? Math.max(4, totals[name] / max * 100) : 0;
+    return '<div class="finance-category-row"><span class="finance-category-name">' + financeEscape(name) +
+      '</span><span class="finance-category-bar"><span style="width:' + percent.toFixed(1) + '%"></span></span><span class="finance-category-amount">' +
+      financeMoney(totals[name]) + '</span></div>';
+  }).join('') + '</div>';
+}
+function financeRowsHtml(rows) {
+  if (!rows.length) return '<tr><td class="finance-empty" colspan="5">Belum ada transaksi yang cocok. Tambahkan transaksi untuk memulai.</td></tr>';
+  return rows.map(function (t) {
+    const income = t.type === 'income';
+    const type = income ? 'Penerimaan' : 'Pengeluaran';
+    const sampleBadge = t.sample ? '<span class="finance-sub">Data contoh</span>' : '';
+    return '<tr><td class="finance-date">' + financeEscape(financeDateLabel(t.date)) + '</td><td><span class="finance-description">' +
+      financeEscape(t.description) + '</span>' + sampleBadge + '</td><td>' + financeEscape(t.unit) +
+      '<span class="finance-sub">' + financeEscape(t.category) + '</span></td><td><span class="finance-type-badge ' +
+      (income ? 'income' : 'expense') + '">' + type + '</span></td><td><div class="finance-row-actions"><span class="finance-amount ' +
+      (income ? 'income' : 'expense') + '">' + (income ? '+' : '−') + financeEscape(financeMoney(t.amount)) +
+      '</span><button type="button" data-finance-action="edit" data-id="' + financeEscape(t.id) + '" aria-label="Ubah ' +
+      financeEscape(t.description) + '">Ubah</button><button type="button" data-finance-action="delete" data-id="' +
+      financeEscape(t.id) + '" aria-label="Hapus ' + financeEscape(t.description) + '">Hapus</button></div></td></tr>';
+  }).join('');
+}
+function financeDashboard() {
+  if (financeLoading) return '<div class="finance-page"><div class="finance-notice">Memuat data keuangan dari server…</div></div>';
+  if (financeError) return '<div class="finance-page"><div class="finance-notice"><strong>Data belum dapat dimuat.</strong> ' + financeEscape(financeError) + ' <button type="button" data-finance-action="reload">Coba lagi</button></div></div>';
+  const rows = financeSummaryRows();
+  const visible = financeVisibleRows();
+  const unit = financeSelectedUnit();
+  const income = Number(financeSummary && financeSummary.income) || 0;
+  const expense = Number(financeSummary && financeSummary.expense) || 0;
+  const budget = financeBudget(financeFilters.month,unit);
+  const spent = budget ? Math.min(100,Math.max(0,expense / budget * 100)) : 0;
+  const remaining = financeSummary ? Number(financeSummary.budgetRemaining) : budget - expense;
+  const budgetText = budget ? financeMoney(budget) : 'Belum ditetapkan';
+  const progressText = budget ? financeMoney(remaining) + (remaining >= 0 ? ' tersisa' : ' di atas anggaran') : 'Atur batas anggaran untuk periode ini';
+  const monthName = financeEscape(financeMonthName(financeFilters.month));
+  return '<div class="finance-page">' +
+    '<section class="finance-heading"><div><h2>Ringkasan keuangan</h2><p>Catat penerimaan dan pengeluaran per unit, lalu pantau anggaran bulanan.</p></div>' +
+    '<div class="finance-actions"><button type="button" class="finance-button" data-finance-action="export">Unduh CSV</button>' +
+    '<button type="button" class="finance-button primary" data-finance-action="new">+ Transaksi</button></div></section>' +
+    '<div class="finance-notice"><strong>Data tersimpan di server.</strong> Transaksi dan anggaran yang Anda simpan dapat dibuka kembali dari perangkat lain.</div>' +
+    '<div class="finance-filters"><label class="finance-filter">Bulan<input id="financeMonth" type="month" value="' + financeEscape(financeFilters.month) + '"></label>' +
+    '<label class="finance-filter">Jenis transaksi<select id="financeType"><option value="all">Semua jenis</option><option value="income"' +
+    (financeFilters.type === 'income' ? ' selected' : '') + '>Penerimaan</option><option value="expense"' +
+    (financeFilters.type === 'expense' ? ' selected' : '') + '>Pengeluaran</option></select></label>' +
+    '<label class="finance-filter finance-filter-search">Cari transaksi<input id="financeSearch" type="search" value="' +
+    financeEscape(financeFilters.query) + '" placeholder="Nama transaksi, unit, kategori"></label></div>' +
+    '<div class="stats finance-stats">' +
+    stat('Penerimaan',financeCompactMoney(income),monthName+' · '+financeEscape(unit),'↗') +
+    stat('Pengeluaran',financeCompactMoney(expense),monthName+' · '+financeEscape(unit),'↘') +
+    stat('Saldo bersih',financeCompactMoney(income-expense),'Penerimaan dikurangi pengeluaran','≈') +
+    stat('Anggaran terpakai',budget ? (Number(financeSummary && financeSummary.budgetUsedPercent || (expense / budget * 100))).toFixed(0)+'%' : '—',budgetText+' · '+financeEscape(unit),'◎') +
+    '</div>' +
+    '<div class="finance-panels"><section class="panel finance-panel"><div class="panel-head"><div><h3>Anggaran bulanan</h3><div class="panel-sub">'+monthName+' · '+financeEscape(unit)+'</div></div></div>' +
+    '<div class="finance-progress-head"><span>Pengeluaran / anggaran</span><strong>'+Math.round(budget ? expense/budget*100 : 0)+'%</strong></div>' +
+    '<div class="finance-progress"><span class="'+(budget && expense>budget ? 'over' : '')+'" style="width:'+spent.toFixed(1)+'%"></span></div>' +
+    '<div class="finance-progress-note">'+financeEscape(progressText)+'</div>' +
+    '<form class="finance-budget-form" id="financeBudgetForm" onsubmit="return false"><label for="financeBudgetAmount">Atur batas anggaran (Rp)<input id="financeBudgetAmount" name="budget" type="number" min="0" step="1000" value="'+financeEscape(budget)+'" required></label>' +
+    '<button type="button" data-finance-action="save-budget">Simpan</button></form></section>' +
+    '<section class="panel finance-panel"><div class="panel-head"><div><h3>Pengeluaran per kategori</h3><div class="panel-sub">Ringkasan '+monthName+' · '+financeEscape(unit)+'</div></div></div>' +
+    financeCategoriesHtml(rows) + '</section></div>' +
+    '<section class="panel finance-ledger"><div class="finance-ledger-head"><div><h3>Daftar transaksi</h3><div class="panel-sub">Pilih Ubah atau Hapus untuk mengelola catatan.</div></div><span class="finance-ledger-count">'+visible.length+' transaksi</span></div>' +
+    '<div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Unit / kategori</th><th>Jenis</th><th>Nominal / aksi</th></tr></thead><tbody>' +
+    financeRowsHtml(visible) + '</tbody></table></div>' +
+    (financeLastPage > 1 ? '<div class="finance-pagination"><button type="button" data-finance-action="page-prev" '+(financePage <= 1 ? 'disabled' : '')+'>Sebelumnya</button><span>Halaman '+financePage+' dari '+financeLastPage+'</span><button type="button" data-finance-action="page-next" '+(financePage >= financeLastPage ? 'disabled' : '')+'>Berikutnya</button></div>' : '') + '</section>' +
+    '<dialog id="financeDialog" class="finance-dialog" aria-labelledby="financeDialogTitle"><form id="financeTransactionForm" class="finance-dialog-form" onsubmit="return false">' +
+    '<input type="hidden" name="id"><div class="finance-dialog-head"><div><h3 id="financeDialogTitle">Tambah transaksi</h3><p>Transaksi disimpan ke database server.</p></div>' +
+    '<button type="button" class="finance-dialog-close" data-finance-action="close" aria-label="Tutup">×</button></div>' +
+    '<div class="finance-form-grid"><label class="finance-field">Jenis<select id="financeTransactionType" name="type" required><option value="income">Penerimaan</option><option value="expense">Pengeluaran</option></select></label>' +
+    '<label class="finance-field">Tanggal<input name="date" type="date" required value="'+financeEscape(financeToday())+'"></label>' +
+    '<label class="finance-field">Nominal (Rp)<input name="amount" type="number" min="1" step="1" required placeholder="Contoh: 250000"></label>' +
+    '<label class="finance-field">Unit<select name="unit" required>'+FINANCE_UNITS.map(function(u){return '<option value="'+financeEscape(u)+'">'+financeEscape(u)+'</option>';}).join('')+'</select></label>' +
+    '<label class="finance-field">Kategori<select id="financeCategory" name="category" required></select></label>' +
+    '<label class="finance-field full">Keterangan<input name="description" type="text" maxlength="100" required placeholder="Contoh: Pembayaran SPP bulan ini"></label></div>' +
+    '<div class="finance-dialog-actions"><button type="button" data-finance-action="close">Batal</button><button type="button" data-finance-action="save-transaction">Simpan transaksi</button></div></form></dialog>' +
+    '</div>';
+}
+function financeRender() {
+  if (document.querySelector('.finance-page')) {
+    document.getElementById('content').innerHTML = financeDashboard();
+  }
+}
+function financePopulateCategories(selected) {
+  const form = document.getElementById('financeTransactionForm');
+  if (!form) return;
+  const type = form.elements['type'].value;
+  const category = form.elements['category'];
+  category.innerHTML = FINANCE_CATEGORIES[type].map(function (name) {
+    return '<option value="' + financeEscape(name) + '">' + financeEscape(name) + '</option>';
+  }).join('');
+  if (selected && FINANCE_CATEGORIES[type].includes(selected)) category.value = selected;
+}
+function financeOpen(id) {
+  const dialog = document.getElementById('financeDialog');
+  const form = document.getElementById('financeTransactionForm');
+  if (!dialog || !form) return;
+  form.reset();
+  form.elements['id'].value = '';
+  form.elements['date'].value = financeToday();
+  form.elements['type'].value = 'income';
+  financePopulateCategories();
+  document.getElementById('financeDialogTitle').textContent = 'Tambah transaksi';
+  if (id) {
+    const row = financeState.transactions.find(function (t) { return String(t.id) === String(id); });
+    if (!row) return;
+    form.elements['id'].value = row.id;
+    form.elements['date'].value = row.date;
+    form.elements['type'].value = row.type;
+    form.elements['unit'].value = row.unit;
+    form.elements['amount'].value = row.amount;
+    form.elements['description'].value = row.description;
+    financePopulateCategories(row.category);
+    document.getElementById('financeDialogTitle').textContent = 'Ubah transaksi';
+  }
+  if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open','');
+}
+function financeClose() {
+  const dialog = document.getElementById('financeDialog');
+  if (!dialog) return;
+  if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+  else dialog.removeAttribute('open');
+}
+function financeExport() {
+  const rows = financeVisibleRows();
+  const csvCell = function (value) { return '"' + String(value == null ? '' : value).replace(/"/g,'""') + '"'; };
+  const header = ['Tanggal','Keterangan','Unit','Kategori','Jenis','Nominal'];
+  const body = rows.map(function (t) {
+    return [t.date,t.description,t.unit,t.category,t.type === 'income' ? 'Penerimaan' : 'Pengeluaran',t.amount].map(csvCell).join(',');
+  });
+  const csv = '\uFEFF' + [header.map(csvCell).join(',')].concat(body).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'njb-keuangan-' + financeFilters.month + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  notify('CSV transaksi berhasil diunduh.');
+}
+
+const financeBaseSetPage = window.setPage;
+window.setPage = function (page) {
+  if (page !== 'finance') {
+    if (typeof financeBaseSetPage === 'function') financeBaseSetPage(page);
+    return;
+  }
+  document.getElementById('pageTitle').textContent = 'Keuangan';
+  document.querySelectorAll('[data-page]').forEach(function (button) {
+    button.classList.toggle('active', button.dataset.page === 'finance');
+  });
+  document.getElementById('content').innerHTML = financeDashboard();
+  document.getElementById('sidebar').classList.remove('open');
+  financeLoad();
+};
+document.getElementById('unitFilter').addEventListener('change', function () {
+  if (document.querySelector('.finance-page')) {
+    financePage = 1;
+    financeLoad();
+  }
+});
+document.addEventListener('change', function (event) {
+  if (event.target.id === 'financeMonth') {
+    financeFilters.month = event.target.value || financeCurrentMonth();
+    financePage = 1;
+    financeLoad();
+  } else if (event.target.id === 'financeType') {
+    financeFilters.type = event.target.value;
+    financePage = 1;
+    financeLoad();
+  } else if (event.target.id === 'financeTransactionType') {
+    financePopulateCategories();
+  }
+});
+document.addEventListener('input', function (event) {
+  if (event.target.id === 'financeSearch') {
+    financeFilters.query = event.target.value;
+    financePage = 1;
+    const cursor = event.target.selectionStart;
+    financeRender();
+    const search = document.getElementById('financeSearch');
+    if (search) {
+      search.focus();
+      if (typeof cursor === 'number') search.setSelectionRange(cursor,cursor);
+    }
+    clearTimeout(financeSearchTimer);
+    financeSearchTimer = setTimeout(financeLoad,300);
+  }
+});
+document.addEventListener('click', async function (event) {
+  const button = event.target.closest('[data-finance-action]');
+  if (!button) return;
+  const action = button.dataset.financeAction;
+  if (action === 'new') financeOpen();
+  else if (action === 'edit') financeOpen(button.dataset.id);
+  else if (action === 'close') financeClose();
+  else if (action === 'save-budget') financeSaveBudget();
+  else if (action === 'save-transaction') financeSaveTransaction();
+  else if (action === 'reload') financeLoad();
+  else if (action === 'page-prev' && financePage > 1) { financePage -= 1; financeLoad(); }
+  else if (action === 'page-next' && financePage < financeLastPage) { financePage += 1; financeLoad(); }
+  else if (action === 'export') financeExport();
+  else if (action === 'delete') {
+    const transaction = financeState.transactions.find(function (t) { return String(t.id) === String(button.dataset.id); });
+    if (!transaction || !window.confirm('Hapus transaksi "' + transaction.description + '"?')) return;
+    try {
+      await financeRequest('/api/v1/finance/transactions/' + encodeURIComponent(transaction.id), 'DELETE');
+      await financeLoad();
+      notify('Transaksi dihapus dari server.');
+    } catch (error) {
+      notify(error.message || 'Transaksi gagal dihapus.');
+    }
+  }
+});
+async function financeSaveBudget() {
+  const form = document.getElementById('financeBudgetForm');
+  if (!form) return;
+  const amount = Math.round(Number(form.elements['budget'].value));
+  if (!Number.isFinite(amount) || amount < 0) {
+    notify('Masukkan anggaran nol atau lebih.');
+    return;
+  }
+  try {
+    await financeRequest('/api/v1/finance/budget', 'PUT', {
+      month:financeFilters.month,
+      unit:financeSelectedUnit(),
+      amount:amount
+    });
+    await financeLoad();
+    notify('Anggaran bulanan tersimpan di server.');
+  } catch (error) {
+    notify(error.message || 'Anggaran gagal disimpan.');
+  }
+}
+async function financeSaveTransaction() {
+  const form = document.getElementById('financeTransactionForm');
+  if (!form) return;
+  const data = new FormData(form);
+  const type = String(data.get('type') || '');
+  const date = String(data.get('date') || '');
+  const unit = String(data.get('unit') || '');
+  const category = String(data.get('category') || '');
+  const description = String(data.get('description') || '').trim();
+  const amount = Math.round(Number(data.get('amount')));
+  const id = String(data.get('id') || '');
+  if (!['income','expense'].includes(type) || !FINANCE_UNITS.includes(unit) || !FINANCE_CATEGORIES[type].includes(category) ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(date) || !description || !Number.isFinite(amount) || amount <= 0) {
+    notify('Periksa tanggal, unit, keterangan, dan nominal transaksi.');
+    return;
+  }
+  const transaction = {date:date,type:type,unit:unit,category:category,description:description,amount:amount};
+  financeFilters.month = date.slice(0,7);
+  if (financeSelectedUnit() !== 'Semua Unit' && financeSelectedUnit() !== unit) document.getElementById('unitFilter').value = 'Semua Unit';
+  try {
+    await financeRequest(id ? '/api/v1/finance/transactions/' + encodeURIComponent(id) : '/api/v1/finance/transactions', id ? 'PUT' : 'POST', transaction);
+    financeClose();
+    await financeLoad();
+    notify(id ? 'Transaksi diperbarui di server.' : 'Transaksi disimpan di server.');
+  } catch (error) {
+    notify(error.message || 'Transaksi gagal disimpan.');
+  }
+}
+</script>
+</body>
+</html>
