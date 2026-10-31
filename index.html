@@ -342,7 +342,7 @@ function financeDashboard() {
     '<button type="button" class="finance-dialog-close" data-finance-action="close" aria-label="Tutup">×</button></div>' +
     '<div class="finance-form-grid"><label class="finance-field">Jenis<select id="financeTransactionType" name="type" required><option value="income">Penerimaan</option><option value="expense">Pengeluaran</option></select></label>' +
     '<label class="finance-field">Tanggal<input name="date" type="date" required value="'+financeEscape(financeToday())+'"></label>' +
-    '<label class="finance-field">Nominal (Rp)<input name="amount" type="number" min="1" step="1000" required placeholder="Contoh: 250000"></label>' +
+    '<label class="finance-field">Nominal (Rp)<input name="amount" type="number" min="1" step="1" required placeholder="Contoh: 250000"></label>' +
     '<label class="finance-field">Unit<select name="unit" required>'+FINANCE_UNITS.map(function(u){return '<option value="'+financeEscape(u)+'">'+financeEscape(u)+'</option>';}).join('')+'</select></label>' +
     '<label class="finance-field">Kategori<select id="financeCategory" name="category" required></select></label>' +
     '<label class="finance-field full">Keterangan<input name="description" type="text" maxlength="100" required placeholder="Contoh: Pembayaran SPP bulan ini"></label></div>' +
