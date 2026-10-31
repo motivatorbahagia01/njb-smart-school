@@ -97,6 +97,9 @@ main{min-width:0}.topbar{height:76px;display:flex;align-items:center;justify-con
 .finance-dialog{width:min(560px,calc(100% - 24px));max-width:560px;border:0;border-radius:18px;padding:0;box-shadow:0 22px 80px rgba(25,35,15,.25);color:var(--ink)}
 .finance-dialog::backdrop{background:rgba(28,35,22,.48);backdrop-filter:blur(2px)}
 .finance-dialog-form{padding:22px}
+.finance-form-message{display:none;margin:0 0 14px;padding:10px 12px;border:1px solid #efc9c0;border-radius:10px;background:#fff2ef;color:#8b3527;font-size:12px;line-height:1.5}
+.finance-form-message.show{display:block}
+.finance-dialog-actions button:disabled{cursor:wait;opacity:.65}
 .finance-dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
 .finance-dialog-head h3{margin:0;font-size:18px}
 .finance-dialog-head p{margin:4px 0 0;color:var(--muted);font-size:11px}
@@ -230,9 +233,10 @@ async function financeRequest(path, method, payload) {
     window.location.assign('/login');
     throw new Error('Sesi admin berakhir. Silakan masuk kembali.');
   }
-  const data = response.status === 204 ? null : await response.json();
+  const contentType = response.headers.get('content-type') || '';
+  const data = response.status === 204 || !contentType.includes('application/json') ? null : await response.json();
   if (!response.ok) {
-    const error = new Error(data && data.message ? data.message : 'Permintaan ke server gagal.');
+    const error = new Error(data && data.message ? data.message : 'Permintaan ke server gagal (HTTP ' + response.status + ').');
     error.status = response.status;
     throw error;
   }
@@ -383,6 +387,7 @@ function financeDashboard() {
     '<label class="finance-field">Unit<select name="unit" required>'+FINANCE_UNITS.map(function(u){return '<option value="'+financeEscape(u)+'">'+financeEscape(u)+'</option>';}).join('')+'</select></label>' +
     '<label class="finance-field">Kategori<select id="financeCategory" name="category" required></select></label>' +
     '<label class="finance-field full">Keterangan<input name="description" type="text" maxlength="100" required placeholder="Contoh: Pembayaran SPP bulan ini"></label></div>' +
+    '<div class="finance-form-message" id="financeFormMessage" role="alert" aria-live="polite"></div>' +
     '<div class="finance-dialog-actions"><button type="button" data-finance-action="close">Batal</button><button type="button" data-finance-action="save-transaction">Simpan transaksi</button></div></form></dialog>' +
     '</div>';
 }
@@ -406,6 +411,11 @@ function financeOpen(id) {
   const form = document.getElementById('financeTransactionForm');
   if (!dialog || !form) return;
   form.reset();
+  const message = document.getElementById('financeFormMessage');
+  if (message) {
+    message.textContent = '';
+    message.classList.remove('show');
+  }
   form.elements['id'].value = '';
   form.elements['date'].value = financeToday();
   form.elements['type'].value = 'income';
@@ -430,6 +440,16 @@ function financeClose() {
   if (!dialog) return;
   if (typeof dialog.close === 'function' && dialog.open) dialog.close();
   else dialog.removeAttribute('open');
+}
+function financeFormNotify(message) {
+  const dialog = document.getElementById('financeDialog');
+  const messageElement = document.getElementById('financeFormMessage');
+  if (dialog && dialog.open && messageElement) {
+    messageElement.textContent = message;
+    messageElement.classList.add('show');
+    return;
+  }
+  notify(message);
 }
 function financeExport() {
   const rows = financeVisibleRows();
@@ -557,19 +577,29 @@ async function financeSaveTransaction() {
   const id = String(data.get('id') || '');
   if (!['income','expense'].includes(type) || !FINANCE_UNITS.includes(unit) || !FINANCE_CATEGORIES[type].includes(category) ||
       !/^\d{4}-\d{2}-\d{2}$/.test(date) || !description || !Number.isFinite(amount) || amount <= 0) {
-    notify('Periksa tanggal, unit, keterangan, dan nominal transaksi.');
+    financeFormNotify('Lengkapi jenis, tanggal, nominal di atas 0, unit, kategori yang sesuai, dan keterangan transaksi.');
     return;
   }
   const transaction = {date:date,type:type,unit:unit,category:category,description:description,amount:amount};
   financeFilters.month = date.slice(0,7);
   if (financeSelectedUnit() !== 'Semua Unit' && financeSelectedUnit() !== unit) document.getElementById('unitFilter').value = 'Semua Unit';
+  const saveButton = form.querySelector('[data-finance-action="save-transaction"]');
+  if (saveButton) {
+    saveButton.disabled = true;
+    saveButton.textContent = 'Menyimpan…';
+  }
   try {
     await financeRequest(id ? '/api/v1/finance/transactions/' + encodeURIComponent(id) : '/api/v1/finance/transactions', id ? 'PUT' : 'POST', transaction);
     financeClose();
     await financeLoad();
     notify(id ? 'Transaksi diperbarui di server.' : 'Transaksi disimpan di server.');
   } catch (error) {
-    notify(error.message || 'Transaksi gagal disimpan.');
+    financeFormNotify(error.message || 'Transaksi gagal disimpan.');
+  } finally {
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.textContent = 'Simpan transaksi';
+    }
   }
 }
 </script>
